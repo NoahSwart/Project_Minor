@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <title>Document Uploader</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 20px; }
+    .hidden { display: none; }
+    form { margin-bottom: 24px; }
+    label { display: block; margin-top: 8px; }
+    textarea, input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+    }
+
+    .button {
+      background: #000;
+      color: #fff;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 999px; /* pill shape */
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: 0.2s ease;
+    }
+
+    .button:hover {
+      background: #333;
+      transform: translateY(-2px);
+    }
+
+    .button:active {
+      transform: translateY(0);
+    }
+
+    #langButton {
+      margin-bottom: 16px;
+    }
+
+    .upload-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .file-name {
+      font-size: 14px;
+      color: #666;
+      margin-left: 4px;
+      min-width: 120px;
+    }
+
+    .text-emphasis {
+      font-weight: 600; 
+      font-size: 1.15rem; 
+    }
+
+    .loading {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .loading.hidden {
+      display: none;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid #e5e7eb;
+      border-top-color: #000;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    button[disabled] {
+      opacity: 0.7;
+      cursor: default;
+    }
+  </style>
+</head>
+<body>
+  <h1 data-key="title" >Upload a PDF</h1>
+
+  <button id="langButton" class="button">
+    <i class="fa-solid fa-language"></i>
+    <span data-key="languageButton">Français</span>
+  </button>
+
+  <form
+    id="uploadForm"
+    action="https://noahswart.app.n8n.cloud/webhook/document-intake"
+    method="POST"
+    enctype="multipart/form-data"
+  >
+    <label for="file" class="text-emphasis" data-key="choosePdf">Choose a pdf</label>
+    <div class="upload-row">
+      <input type="file" id="file" name="file" accept="application/pdf" required hidden />
+      
+      <button type="button" id="fileButton" class="button">
+        <i class="fa-solid fa-file-arrow-up"></i>
+        <span data-key="fileButton"> No file chosen </span>
+      </button>
+
+      <span id="fileName" class="file-name" data-key="choose_file">No file chosen</span>
+      <button type="submit" class="button">
+        <span data-key="uploadButton"> Upload & Generate Preview </span>
+      </button>
+      <div id="loadingIndicator" class="loading hidden">
+        <span class="spinner"></span>
+        <span>Processing…</span>
+      </div>
+    </div>    
+  </form>
+
+  <form
+    id="confirmForm"
+    class="hidden"
+    action="https://noahswart.app.n8n.cloud/webhook/document-confirm"
+    method="POST"
+  >
+    <h2 data-key="reviewConfirm">Review & Confirm</h2>
+
+    <label for="pdf_title" data-key="pdf_title">Title</label>
+    <input type="text" id="pdf_title" name="pdf_title" />
+
+    <label for="team_type" data-key="team_type">Team</label>
+    <input type="text" id="team_type" name="team_type" />
+
+    <label for="document_type" data-key="document_type">Document Type</label>
+    <input type="text" id="document_type" name="document_type" />
+
+    <label for="methodology" data-key="methodology">Methodology</label>
+    <input type="text" id="methodology" name="methodology" />
+
+    <label for="date" data-key="date">Date</label>
+    <input type="date" id="date" name="date" />
+
+    <label for="responsibles" data-key="responsibles">Responsibles</label>
+    <input type="text" id="responsibles" name="responsibles" />
+
+    <label for="summary" data-key="summary">Summary</label>
+    <textarea id="summary" name="summary" rows="6"></textarea>
+
+    <div>
+      <button type="submit" class="button">
+        <i class="fa-solid fa-database"></i>
+        <span data-key="saveButton"> Save to Database </span>
+      </button>
+      <div id="loadingIndicator2" class="loading hidden">
+          <span class="spinner"></span>
+          <span>Processing…</span>
+      </div>
+    </div>
+    
+    
+  </form>
+
+  <script>
+  const translations = {
+    en: {
+      title: "Upload a PDF",
+      choosePdf: "Choose a PDF",
+      fileButton: "Upload file",
+      choose_file: "No file chosen",
+      uploadButton: "Upload & Generate Preview",
+      reviewConfirm: "Review & Confirm",
+
+      pdf_title: "Title",
+      team_type: "Team",
+      document_type: "Document Type",
+      methodology: "Methodology",
+      date: "Date",
+      responsibles: "Responsibles",
+      summary: "Summary",
+
+      saveButton: "Save to Database",
+      languageButton: "Français"
+    },
+
+    fr: {
+      title: "Télécharger un PDF",
+      choosePdf: "Choisissez un PDF",
+      fileButton: "Importer le fichier",
+      choose_file: "Aucun fichier sélectionné",
+      uploadButton: "Télécharger et générer l’aperçu",
+      reviewConfirm: "Vérifier et confirmer",
+
+      pdf_title: "Titre",
+      team_type: "Équipe",
+      document_type: "Type de Document",
+      methodology: "Méthodologie",
+      date: "Date",
+      responsibles: "Responsables",
+      summary: "Résumé",
+
+      saveButton: "Enregistrer dans la Base de Données",
+      languageButton: "Darija"
+    },
+
+    dar: {
+      title: "حمّل PDF",
+      choosePdf: "ختار PDF",
+      fileButton: "حمّل الملف",
+      uploadButton: "حمّل و دير المعاينة",
+      choose_file: "ما كاين حتى ملف مختار",
+      reviewConfirm: "راجع و أكّد",
+
+      pdf_title: "العنوان",
+      team_type: "الفرقة",
+      document_type: "نوع الوثيقة",
+      methodology: "الطريقة",
+      date: "التاريخ",
+      responsibles: "المسؤولين",
+      summary: "الملخص",
+
+      saveButton: "سجّل ف قاعدة البيانات",
+      languageButton: "English"
+    }
+  };
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const fileInput   = document.getElementById('file');
+      const fileButton  = document.getElementById('fileButton');
+      const fileNameEl  = document.getElementById('fileName');
+
+      fileButton.addEventListener('click', () => {
+        fileInput.click();
+      });
+
+      fileInput.addEventListener('change', () => {
+        const file = fileInput.files[0];
+        fileNameEl.textContent = file ? file.name : 'No file chosen';
+      });
+    });
+
+    let currentLang = "en";
+    const langOrder = ["en", "fr", "dar"];
+
+    function updateLanguage(lang) {
+      currentLang = lang;
+
+      document.querySelectorAll("[data-key]").forEach(el => {
+        const key = el.getAttribute("data-key");
+        el.textContent = translations[lang][key];
+      });
+
+      if (lang === "dar") {
+        document.body.setAttribute("dir", "rtl");
+      } else {
+        document.body.setAttribute("dir", "ltr");
+      }
+    }
+
+    document.getElementById("langButton").addEventListener("click", () => {
+      const currentIndex = langOrder.indexOf(currentLang);
+      const nextLang = langOrder[(currentIndex + 1) % langOrder.length];
+      updateLanguage(nextLang);
+    });
+
+    updateLanguage("en");
+
+    const uploadForm = document.getElementById('uploadForm');
+    const confirmForm = document.getElementById('confirmForm');
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    const uploadButton = document.getElementById('uploadButton');
+
+    uploadForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(uploadForm);
+
+      loadingIndicator.classList.remove('hidden');
+      // uploadButton.disabled = true;
+
+      try {
+        const res = await fetch(uploadForm.action, {
+          method: 'POST',
+          body: formData,
+        });
+        
+        
+
+        if (!res.ok) {
+          alert('Error generating preview');
+          return;
+        }
+
+        const data = await res.json();
+
+        document.getElementById('pdf_title').value = data.pdf_title || '';
+        document.getElementById('team_type').value = data.team_type || '';
+        document.getElementById('document_type').value = data.document_type || '';
+        document.getElementById('methodology').value = data.methodology || '';
+        document.getElementById('date').value = data.date || '';
+        document.getElementById('responsibles').value = data.responsibles || '';
+        document.getElementById('summary').value = data.summary || '';
+
+        confirmForm.classList.remove('hidden');
+
+      } catch (err) {
+        console.error(err);
+        alert('Error generating preview');
+      } finally {  
+        loadingIndicator.classList.add('hidden');
+        // uploadButton.disabled = false;
+      }
+    });
+
+    confirmForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const payload = {
+        pdf_title:     document.getElementById('pdf_title').value,
+        team_type:     document.getElementById('team_type').value,
+        document_type: document.getElementById('document_type').value,
+        methodology:   document.getElementById('methodology').value,
+        date:          document.getElementById('date').value,
+        responsibles:  document.getElementById('responsibles').value,
+        summary:       document.getElementById('summary').value,
+      };
+
+      const loadingIndicator2 = document.getElementById('loadingIndicator2');
+      loadingIndicator2.classList.remove('hidden');
+
+      try{
+        const res = await fetch(confirmForm.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) {
+          alert('Error uploading to database');
+          return;
+        }
+
+        const data = await res.json();
+
+        if (!data.success) {
+          loadingIndicator2.classList.add('hidden');
+          alert('Error saving to database');
+          return;
+        }
+        
+        loadingIndicator2.classList.add('hidden');
+        alert('Saved to database!');
+        
+        if(data.success){
+          confirmForm.classList.add('hidden');
+          const fileNameEl  = document.getElementById('fileName');
+          const fileInput = document.getElementById('file');
+
+          fileInput.value = '';
+          fileNameEl.textContent = 'No file chosen';
+
+        }
+
+      } catch (err) {
+        console.error(err);
+        alert('Error saving to database!');
+      }finally{
+        loadingIndicator2.classList.add('hidden');
+      }
+    });
+
+  
+  </script>
+</body>
+</html>
