@@ -125,7 +125,7 @@
       </button>
       <div id="loadingIndicator" class="loading hidden">
         <span class="spinner"></span>
-        <span>Processing…</span>
+        <span data-key="processing">Processing…</span>
       </div>
     </div>    
   </form>
@@ -166,8 +166,11 @@
       </button>
       <div id="loadingIndicator2" class="loading hidden">
           <span class="spinner"></span>
-          <span>Processing…</span>
+          <span data-key="processing">Processing…</span>
       </div>
+      <button type="button" class="button" id="cancelButton">
+        <span data-key="cancelButton"> Cancel </span>
+      </button>
     </div>
     
     
@@ -182,6 +185,7 @@
       choose_file: "No file chosen",
       uploadButton: "Upload & Generate Preview",
       reviewConfirm: "Review & Confirm",
+      processing: "Processing...",
 
       pdf_title: "Title",
       team_type: "Team",
@@ -192,6 +196,7 @@
       summary: "Summary",
 
       saveButton: "Save to Database",
+      cancelButton: "Cancel",
       languageButton: "Français"
     },
 
@@ -202,6 +207,7 @@
       choose_file: "Aucun fichier sélectionné",
       uploadButton: "Télécharger et générer l’aperçu",
       reviewConfirm: "Vérifier et confirmer",
+      processing: "Traitement...",
 
       pdf_title: "Titre",
       team_type: "Équipe",
@@ -212,6 +218,7 @@
       summary: "Résumé",
 
       saveButton: "Enregistrer dans la Base de Données",
+      cancelButton: "Annuler",
       languageButton: "Darija"
     },
 
@@ -222,6 +229,7 @@
       uploadButton: "حمّل و دير المعاينة",
       choose_file: "ما كاين حتى ملف مختار",
       reviewConfirm: "راجع و أكّد",
+      processing: "كايتصرف...",
 
       pdf_title: "العنوان",
       team_type: "الفرقة",
@@ -232,6 +240,7 @@
       summary: "الملخص",
 
       saveButton: "سجّل ف قاعدة البيانات",
+      cancelButton: "بطل",
       languageButton: "English"
     }
   };
@@ -283,6 +292,7 @@
     const confirmForm = document.getElementById('confirmForm');
     const loadingIndicator = document.getElementById('loadingIndicator');
     const uploadButton = document.getElementById('uploadButton');
+    const cancelButton = document.getElementById('cancelButton');
 
     uploadForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -383,7 +393,14 @@
       }
     });
 
-  
+    cancelButton.addEventListener('click', () => {
+        confirmForm.classList.add('hidden');
+        const fileNameEl  = document.getElementById('fileName');
+        const fileInput = document.getElementById('file');
+
+        fileInput.value = '';
+        fileNameEl.textContent = 'No file chosen';
+    });
   </script>
 </body>
 </html>
