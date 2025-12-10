@@ -865,23 +865,24 @@
 
       // ========= Generate long summary =========
       generateLongSummaryBtn.addEventListener('click', async () => {
-        const basePayload = {
-          pdf_title:     document.getElementById('pdf_title').value,
-          team_type:     document.getElementById('team_type').value,
-          document_type: document.getElementById('document_type').value,
-          methodology:   document.getElementById('methodology').value,
-          date:          document.getElementById('date').value,
-          responsibles:  document.getElementById('responsibles').value,
-          summary:       document.getElementById('summary').value
-        };
+        // const basePayload = {
+        //   pdf_title:     document.getElementById('pdf_title').value,
+        //   team_type:     document.getElementById('team_type').value,
+        //   document_type: document.getElementById('document_type').value,
+        //   methodology:   document.getElementById('methodology').value,
+        //   date:          document.getElementById('date').value,
+        //   responsibles:  document.getElementById('responsibles').value,
+        //   summary:       document.getElementById('summary').value
+        // };
+
+        const formData = new FormData(uploadForm)
 
         loadingLong.classList.remove('hidden');
 
         try {
           const res = await fetch(LONG_SUMMARY_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(basePayload),
+            body: formData
           });
 
           if (!res.ok) {
@@ -938,23 +939,25 @@
 
       // ========= Generate specific details =========
       generateDetailsBtn.addEventListener('click', async () => {
-        const basePayload = {
-          pdf_title:     document.getElementById('pdf_title').value,
-          team_type:     document.getElementById('team_type').value,
-          document_type: document.getElementById('document_type').value,
-          methodology:   document.getElementById('methodology').value,
-          date:          document.getElementById('date').value,
-          responsibles:  document.getElementById('responsibles').value,
-          summary:       document.getElementById('summary').value
-        };
+        // const basePayload = {
+        //   pdf_title:     document.getElementById('pdf_title').value,
+        //   team_type:     document.getElementById('team_type').value,
+        //   document_type: document.getElementById('document_type').value,
+        //   methodology:   document.getElementById('methodology').value,
+        //   date:          document.getElementById('date').value,
+        //   responsibles:  document.getElementById('responsibles').value,
+        //   summary:       document.getElementById('summary').value
+        // };
+
+        const formData = new FormData(uploadForm)
+
 
         loadingDetails.classList.remove('hidden');
 
         try {
           const res = await fetch(DETAILS_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(basePayload),
+            body: formData,
           });
 
           if (!res.ok) {
