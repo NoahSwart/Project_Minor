@@ -37,7 +37,7 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      background-image: url("https://images.pexels.com/photos/669615/pexels-photo-669615.jpeg?auto=compress&cs=tinysrgb&w=1600");
+      background-image: url("images/image4.png");
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -102,8 +102,28 @@
       max-width: none;
       margin: 0;
       color: #020617;
-      background: #ffffff;
       min-height: 100vh;
+      overflow: hidden; /* Important so the blur doesn't overflow */
+    }
+
+    /* Background blur layer */
+    #app-container::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: url("images/image3.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      filter: blur(10px); /* Adjust strength */
+      transform: scale(1.1); /* Prevent edge cut-off from blur */
+      z-index: -1;
+    }
+
+    /* Keep the content above the blurred layer */
+    #app-container > * {
+      position: relative;
+      z-index: 2;
     }
 
     #app-container.active {
